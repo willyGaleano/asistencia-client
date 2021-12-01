@@ -30,7 +30,6 @@ const ReaderQRCode = () => {
         userAppId: respAsistencia[0],
         asistenciaId: respAsistencia[1],
       };
-      console.log("respAsistencia: ", body);
       setShowScan(false);
 
       try {
@@ -38,7 +37,7 @@ const ReaderQRCode = () => {
           body.asistenciaId,
           body
         );
-        console.log(resp);
+
         if (resp.succeeded) {
           setEvento(resp.data);
           toast({
@@ -67,7 +66,6 @@ const ReaderQRCode = () => {
           duration: 6000,
           isClosable: true,
         });
-        console.log(error.message);
       }
     } else {
       console.log(result);
