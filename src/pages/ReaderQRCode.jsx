@@ -38,7 +38,7 @@ const ReaderQRCode = () => {
           body.asistenciaId,
           body
         );
-        if (resp.succedeed) {
+        if (resp.succeeded) {
           setEvento(resp.data);
           toast({
             title: "Asistencia registrada",
