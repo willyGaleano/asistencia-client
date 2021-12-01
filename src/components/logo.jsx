@@ -20,28 +20,27 @@ const LogoBox = styled.span`
 `;
 
 const Logo = () => {
-  const footPrintImg = `/images/footprint${useColorModeValue("", "-dark")}.png`;
+  //const footPrintImg = `/images/footprint${useColorModeValue("", "-dark")}.png`;
+  const footPrintImg = `/asistencia.png`;
 
   return (
-    <a>
-      <LogoBox>
-        <Image
-          src={footPrintImg}
-          style={{ marginRight: 5 }}
-          width={8}
-          height={8}
-          alt="logo"
-        />
-        <Text
-          color={useColorModeValue("gray.800", "whiteAlpha.900")}
-          fontFamily='M PLUS Rounded 1c", sans-serif'
-          fontWeight="bold"
-          ml={3}
-        >
-          AsistenciaApp
-        </Text>
-      </LogoBox>
-    </a>
+    <LogoBox>
+      <Image
+        src={footPrintImg}
+        style={{ marginRight: 5 }}
+        width={8}
+        height={8}
+        alt="logo"
+      />
+      <Text
+        color={useColorModeValue("gray.800", "whiteAlpha.900")}
+        fontFamily="sans-serif"
+        fontWeight="bold"
+        ml={3}
+      >
+        Asistencias App
+      </Text>
+    </LogoBox>
   );
 };
 

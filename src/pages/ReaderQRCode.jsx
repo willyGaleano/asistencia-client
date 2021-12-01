@@ -6,37 +6,68 @@ import {
   Heading,
   useToast,
   Image,
+  Stack,
+  Skeleton,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import QrReader from "react-qr-reader";
 import { BioSection, BioYear } from "../components/bio";
 import Section from "../components/Section";
+import { asistenciaAPI } from "../services/api/asistenciaAPI";
 
 const ReaderQRCode = () => {
-  const [value, setValue] = useState("");
   const [showScan, setShowScan] = useState(false);
+  const [evento, setEvento] = useState(null);
   const toast = useToast();
 
   const handleErrorWebCam = (error) => {
     console.log(error);
   };
-
-  const handleScanWebCam = (result) => {
+  const handleScanWebCam = async (result) => {
     if (result) {
-      setValue(result);
+      const respAsistencia = result.split("#");
+      const body = {
+        userAppId: respAsistencia[0],
+        asistenciaId: respAsistencia[1],
+      };
+      console.log("respAsistencia: ", body);
       setShowScan(false);
-      if (
-        result ===
-        "5bb085a1-2315-43a5-b140-8c488cb290f4#238e7ec9-2c8e-4c25-9247-ca20df809cd2"
-      )
+
+      try {
+        const resp = await asistenciaAPI.marcarAsistencia(
+          body.asistenciaId,
+          body
+        );
+        if (resp.succedeed) {
+          setEvento(resp.data);
+          toast({
+            title: "Asistencia registrada",
+            description: "Se registró correctamente su asistencia.",
+            position: "top-right",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
+        } else
+          toast({
+            title: "Atención!",
+            description: resp.message,
+            position: "top-right",
+            status: "info",
+            duration: 6000,
+            isClosable: true,
+          });
+      } catch (error) {
         toast({
-          title: "Asistencia registrada.",
-          description: "Se registró correctamente su asistencia.",
+          title: "API ERROR",
+          description: error.message,
           position: "top-right",
-          status: "success",
-          duration: 3000,
+          status: "error",
+          duration: 6000,
           isClosable: true,
         });
+        console.log(error.message);
+      }
     } else {
       console.log(result);
     }
@@ -48,6 +79,7 @@ const ReaderQRCode = () => {
         <Box
           borderRadius="lg"
           my={3}
+          mb={10}
           p={3}
           textAlign="center"
           bg={useColorModeValue("whiteAlpha.500", "whiteAlpha.200")}
@@ -58,7 +90,7 @@ const ReaderQRCode = () => {
         <Button
           rightIcon={<ChevronRightIcon />}
           colorScheme="teal"
-          style={{ marginBottom: 10 }}
+          style={{ marginBottom: 30 }}
           onClick={() => setShowScan(!showScan)}
         >
           {!showScan ? "Abrir Scan" : "Cerrar Scan"}
@@ -71,37 +103,38 @@ const ReaderQRCode = () => {
             onScan={handleScanWebCam}
           />
         ) : (
-          <></>
+          <Stack>
+            <Skeleton startColor="#63B3ED" endColor="#2A4365" height="20px" />
+            <Skeleton startColor="#63B3ED" endColor="#2A4365" height="20px" />
+            <Skeleton startColor="#63B3ED" endColor="#2A4365" height="20px" />
+            <Skeleton startColor="#63B3ED" endColor="#2A4365" height="20px" />
+            <Skeleton startColor="#63B3ED" endColor="#2A4365" height="20px" />
+          </Stack>
         )}
       </Box>
-      {!showScan ? (
+      {evento !== null ? (
         <Section delay={0.2}>
           <Heading as="h3" variant="section-title">
             Asistencia registrada
           </Heading>
           <BioSection>
             <BioYear>Evento</BioYear>
-            Charla 15
+            {evento.nombreCharla}
           </BioSection>
           <BioSection>
             <BioYear>Ingreso</BioYear>
-            11/11/2021
+            {evento.fechaIni}
           </BioSection>
           <BioSection>
             <BioYear>Desc.</BioYear>
-            Completed the Master&apos;s Program in the Graduate School of
-            Information Science at Nara Institute of Science and Technology
-            (奈良先端科学技術大学院大学情報科学研究科修士課程) Completed the
-            Master&apos;s Program in the Graduate School of Information Science
-            at Nara Institute of Science and Technology
-            (奈良先端科学技術大学院大学情報科学研究科修士課程)
+            {evento.descripcion}
           </BioSection>
           <BioSection>
             <BioYear>Duración</BioYear>
-            3h
+            {evento.duracion}
           </BioSection>
           <Image
-            src="https://willynetaccount.blob.core.windows.net/imagescharlascontainer/appcharlas/charlas/b20495eb-07e7-4c2d-ba29-5c1f62cbb0ce_loqe4rft.c0r.jpg"
+            src={evento.urlImage}
             fallbackSrc="https://via.placeholder.com/150"
           />
         </Section>
