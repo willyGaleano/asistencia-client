@@ -1,8 +1,8 @@
 import axios from "axios";
-import { BASE_URL_API_LOCAL } from "../utils/consts";
+import { BASE_URL_API_LOCAL, BASE_URL_API_REMOTE } from "../utils/consts";
 
 const axiosInstance = axios.create({
-  baseURL: BASE_URL_API_LOCAL,
+  baseURL: BASE_URL_API_REMOTE,
   headers: {
     "Content-Type": "application/json",
   },
